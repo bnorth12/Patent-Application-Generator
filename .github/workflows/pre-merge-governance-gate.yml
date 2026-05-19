@@ -57,12 +57,22 @@ jobs:
               await new Promise(resolve => setTimeout(resolve, 5000));
             }
 
-            if (mergeableState !== 'clean') {
-              core.setFailed(`PR mergeable_state is '${mergeableState}'. Required state: clean.`);
+            if (mergeable === false || ['dirty', 'behind', 'unstable'].includes(mergeableState)) {
+              core.setFailed(`PR mergeability indicates integration risk: mergeable=${mergeable}, mergeable_state='${mergeableState}'.`);
               return;
             }
 
-            core.info("PR is non-draft and mergeable_state is clean.");
+            if (mergeableState === 'blocked') {
+              core.warning("PR mergeable_state is 'blocked'. Continuing to evaluate explicit policy gates for deterministic blocker reporting.");
+              return;
+            }
+
+            if (mergeableState === 'clean') {
+              core.info("PR is non-draft and mergeable_state is clean.");
+              return;
+            }
+
+            core.setFailed(`PR mergeable_state is '${mergeableState}'. Required state: clean or blocked with downstream policy evaluation.`);
 
       - name: Validate linked issues are closed
         uses: actions/github-script@v7
