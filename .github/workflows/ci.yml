@@ -1,0 +1,55 @@
+name: CI – Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - "sprint/**"
+  pull_request:
+    branches:
+      - main
+      - "sprint/**"
+
+jobs:
+  governance-check:
+    name: Governance & Requirements Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: pip install pytest
+
+      - name: Check requirements noun-verb format
+        run: python scripts/governance/check_requirements.py
+
+      - name: Run governance tests
+        run: pytest tests/governance/ -v
+
+  lint-python:
+    name: Lint Python Sources
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install linting tools
+        run: pip install flake8
+
+      - name: Lint src/
+        run: flake8 src/ --max-line-length=120 --exclude=__pycache__ || true
+
+      - name: Lint tests/
+        run: flake8 tests/ --max-line-length=120 --exclude=__pycache__ || true
+
+      - name: Lint scripts/
+        run: flake8 scripts/ --max-line-length=120 --exclude=__pycache__ || true
