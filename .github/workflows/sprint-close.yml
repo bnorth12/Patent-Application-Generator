@@ -1,0 +1,53 @@
+name: Sprint Close
+
+on:
+  workflow_dispatch:
+    inputs:
+      sprint_number:
+        description: "Sprint number to close (e.g., 01)"
+        required: true
+        type: string
+      sprint_branch:
+        description: "Sprint branch name (e.g., sprint/sprint-01)"
+        required: true
+        type: string
+
+jobs:
+  close-sprint:
+    name: Close Sprint and Create PR
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.sprint_branch }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      - name: Run exit criteria validation
+        run: python scripts/governance/validate_exit_criteria.py --sprint ${{ inputs.sprint_number }}
+
+      - name: Run governance tests
+        run: pytest tests/governance/ -v
+
+      - name: Create sprint close PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "Sprint ${{ inputs.sprint_number }} Close" \
+            --body "$(cat sprints/sprint_${{ inputs.sprint_number }}/sprint_plan.md)" \
+            --base main \
+            --head ${{ inputs.sprint_branch }} \
+            --label "sprint-close"

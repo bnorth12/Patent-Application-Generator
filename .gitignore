@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+.env
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# PHP / CakePHP
+/src/backend/vendor/
+/src/backend/tmp/
+/src/backend/logs/*.log
+/src/backend/.env
+
+# Node (if used for tooling)
+node_modules/
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# RAG source data (large files, stored externally)
+data/rag/sources/
+
+# Logs
+logs/
+
+# Secrets
+*.env
+.env.*
+!.env.example
+secrets/

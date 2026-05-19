@@ -1,0 +1,34 @@
+name: Governance Policy Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - "sprint/**"
+
+jobs:
+  validate-governance:
+    name: Validate Governance Documents
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      - name: Enforce requirements noun-verb format
+        run: python scripts/governance/check_requirements.py
+
+      - name: Check sprint folder structure
+        run: python scripts/governance/check_sprint_structure.py
+
+      - name: Validate definition of done references
+        run: python scripts/governance/check_dod_references.py
+
+      - name: Run all governance tests
+        run: pytest tests/governance/ -v --tb=short

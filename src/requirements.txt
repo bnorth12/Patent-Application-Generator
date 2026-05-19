@@ -1,0 +1,33 @@
+# Patent Application Generator – Python production dependencies
+# Pin to exact versions for reproducibility.
+# Development dependencies are in requirements-dev.txt.
+
+# LangGraph and LangChain (Sprint 3+)
+# langgraph==0.2.0
+# langchain==0.3.0
+# langchain-openai==0.2.0
+# langchain-community==0.3.0
+
+# Embeddings (Sprint 2+)
+# sentence-transformers==3.0.0
+
+# Vector database (Sprint 2+)
+# chromadb==0.5.0
+
+# PDF parsing (Sprint 2+)
+# pypdf==4.0.0
+
+# Task queue (Sprint 2+)
+# celery==5.4.0
+# redis==5.0.0
+
+# Web framework utilities (Sprint 2+)
+# requests==2.32.0
+# python-dotenv==1.0.0
+
+# Data validation (Sprint 3+)
+# pydantic==2.7.0
+
+# NOTE: Uncomment dependencies as they are introduced each sprint.
+# All versions must be reviewed against the GitHub Advisory Database
+# before being uncommented and committed.

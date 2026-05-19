@@ -1,0 +1,17 @@
+# Code Owners – Patent Application Generator
+
+# Global owners
+* @bnorth12
+
+# Governance documents require owner review
+docs/governance/ @bnorth12
+.github/ @bnorth12
+
+# Sprint documents require owner review
+sprints/ @bnorth12
+
+# Source code
+src/ @bnorth12
+
+# Tests must be reviewed by owner
+tests/ @bnorth12
