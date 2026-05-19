@@ -53,12 +53,12 @@ def generate_patent_draft(patent_input: PatentInput) -> str:
 def load_input(input_path: Path) -> PatentInput:
     payload = json.loads(input_path.read_text(encoding="utf-8"))
     return PatentInput(
-        title=payload.get("title", "").strip(),
+        title=(payload.get("title") or "").strip(),
         inventors=payload.get("inventors", []),
-        abstract=payload.get("abstract", "").strip(),
-        field_of_invention=payload.get("field_of_invention", "").strip(),
-        background=payload.get("background", "").strip(),
-        summary=payload.get("summary", "").strip(),
+        abstract=(payload.get("abstract") or "").strip(),
+        field_of_invention=(payload.get("field_of_invention") or "").strip(),
+        background=(payload.get("background") or "").strip(),
+        summary=(payload.get("summary") or "").strip(),
         claims=payload.get("claims", []),
     )
 

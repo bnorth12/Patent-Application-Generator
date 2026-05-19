@@ -5,17 +5,17 @@
 # These rules are intended to work with branch protection requiring code owner review.
 
 # Governance documents and generated governance artifacts
-docs/governance/* @brian
+docs/governance/* @bnorth12
 
 # Governance templates
-docs/governance/templates/* @brian
+docs/governance/templates/* @bnorth12
 
 # Governance repo customizations
-.github/skills/repo-governance/* @brian
-.github/instructions/repo-governance.instructions.md @brian
-.github/prompts/generate-governance-artifacts.prompt.md @brian
-.github/agents/release-gate.agent.md @brian
+.github/skills/repo-governance/* @bnorth12
+.github/instructions/repo-governance.instructions.md @bnorth12
+.github/prompts/generate-governance-artifacts.prompt.md @bnorth12
+.github/agents/release-gate.agent.md @bnorth12
 
 # Governance change intake and review templates
-.github/ISSUE_TEMPLATE/governance-change.yml @brian
-.github/pull_request_template.md @brian
+.github/ISSUE_TEMPLATE/governance-change.yml @bnorth12
+.github/pull_request_template.md @bnorth12

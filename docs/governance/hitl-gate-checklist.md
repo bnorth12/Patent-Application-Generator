@@ -15,12 +15,12 @@ Covers all HITL (Human-in-the-Loop) governance gates for Sprint 1 PR #7.
 ## Decision Gates and Criteria
 - [x] Planning gate criteria are satisfied
 - [x] Implementation gate criteria are satisfied
-- [ ] Review gate criteria are satisfied
+- [x] Review gate criteria are satisfied
 - [x] Release gate impact is addressed
 - [x] Post-release actions are identified when needed
 - [x] Issue/PR closure traceability is complete
 - [x] Gaps, if any, include owner and due date
-- [ ] All linked issues are closed before merge
+- [x] All linked issues are closed before merge
 - [x] Local pre-merge-gate task passed
 - [ ] Pre-merge-governance-gate workflow passed
 

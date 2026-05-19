@@ -49,7 +49,7 @@ Pass "No merge conflict markers detected in merge simulation."
 
 $diffCheck = git diff --check origin/$BaseBranch...HEAD
 if ($diffCheck) {
-    Fail "Whitespace or conflict-marker issues detected in changed content.\n$diffCheck"
+    Fail "Whitespace or conflict-marker issues detected in changed content.`n$diffCheck"
 }
 Pass "Diff quality checks passed."
 
