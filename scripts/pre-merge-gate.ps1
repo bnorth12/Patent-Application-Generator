@@ -55,7 +55,7 @@ Pass "Diff quality checks passed."
 
 $changedFiles = git diff --name-only origin/$BaseBranch...HEAD
 if ($changedFiles) {
-    $markers = Select-String -Path $changedFiles -Pattern "<<<<<<<|=======|>>>>>>>" -SimpleMatch -ErrorAction SilentlyContinue
+    $markers = Select-String -Path $changedFiles -Pattern "^(<<<<<<<|=======|>>>>>>>)" -ErrorAction SilentlyContinue
     if ($markers) {
         Fail "Conflict markers detected in changed files."
     }
