@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "pre-merge-gate",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/pre-merge-gate.ps1",
+        "-BaseBranch",
+        "main"
+      ],
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}

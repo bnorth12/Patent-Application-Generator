@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+
+set -e
+
+echo "[pre-commit] Running staged content checks..."
+
+# Fail on conflict markers and whitespace issues in staged changes.
+if ! git diff --cached --check --no-color; then
+  echo "[pre-commit] Failed: fix staged whitespace/conflict-marker issues."
+  exit 1
+fi
+
+echo "[pre-commit] Passed."
+exit 0

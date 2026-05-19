@@ -1,0 +1,163 @@
+name: pre-merge-governance-gate
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  governance-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure PR is mergeable and clean
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            if (!pr) {
+              core.setFailed('No pull request payload available.');
+              return;
+            }
+
+            if (pr.draft) {
+              core.setFailed('PR is draft. Mark ready for review before merge.');
+              return;
+            }
+
+            if (pr.mergeable_state !== 'clean') {
+              core.setFailed(`PR mergeable_state is '${pr.mergeable_state}'. Required state: clean.`);
+              return;
+            }
+
+            core.info("PR is non-draft and mergeable_state is clean.");
+
+      - name: Validate linked issues are closed
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const regex = /(close[sd]?|fix(e[sd])?|resolve[sd]?)\s+#(\d+)/ig;
+            const issueNumbers = new Set();
+            let match;
+            while ((match = regex.exec(body)) !== null) {
+              issueNumbers.add(Number(match[3]));
+            }
+
+            if (issueNumbers.size === 0) {
+              core.setFailed('No linked issues found in PR body. Link issue closure keywords (e.g., closes #123).');
+              return;
+            }
+
+            const openIssues = [];
+            for (const issue_number of issueNumbers) {
+              const issue = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number
+              });
+              if (issue.data.state !== 'closed') {
+                openIssues.push(issue_number);
+              }
+            }
+
+            if (openIssues.length > 0) {
+              core.setFailed(`Linked issues still open: ${openIssues.join(', ')}.`);
+              return;
+            }
+
+            core.info(`All linked issues are closed: ${Array.from(issueNumbers).join(', ')}.`);
+
+      - name: Validate review decision and unresolved threads
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+
+            const reviewData = await github.graphql(
+              `query($owner:String!, $repo:String!, $number:Int!) {
+                repository(owner:$owner, name:$repo) {
+                  pullRequest(number:$number) {
+                    reviewDecision
+                    reviewThreads(first:100) {
+                      nodes { isResolved }
+                    }
+                  }
+                }
+              }`,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                number: pr.number
+              }
+            );
+
+            const prNode = reviewData.repository.pullRequest;
+            const unresolved = prNode.reviewThreads.nodes.filter(t => !t.isResolved).length;
+
+            if (prNode.reviewDecision !== 'APPROVED') {
+              core.setFailed(`Review decision is '${prNode.reviewDecision}'. Required: APPROVED.`);
+              return;
+            }
+
+            if (unresolved > 0) {
+              core.setFailed(`Unresolved review threads: ${unresolved}.`);
+              return;
+            }
+
+            core.info('Review decision approved and all threads resolved.');
+
+      - name: Validate governance checklist completion
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = (context.payload.pull_request.body || '').toLowerCase();
+            const requiredChecks = [
+              'planning gate criteria are satisfied',
+              'implementation gate criteria are satisfied',
+              'review gate criteria are satisfied',
+              'release gate impact is addressed',
+              'post-release actions are identified when needed',
+              'issue/pr closure traceability is complete',
+              'gaps, if any, include owner and due date',
+              'all linked issues are closed before merge',
+              'local pre-merge-gate task passed',
+              'pre-merge-governance-gate workflow passed'
+            ];
+
+            for (const label of requiredChecks) {
+              const checked = body.includes(`- [x] ${label}`);
+              if (!checked) {
+                core.setFailed(`Required checklist item not checked: ${label}`);
+                return;
+              }
+            }
+
+            const requiredFields = [
+              'change objective:',
+              'scope:',
+              'linked governance issue or requirement:',
+              'requirement ids:',
+              'implementation artifacts:',
+              'validation artifacts:'
+            ];
+
+            for (const field of requiredFields) {
+              const re = new RegExp(`${field}\\s*(.+)`, 'i');
+              const m = body.match(re);
+              if (!m || !m[1] || m[1].trim().length < 2) {
+                core.setFailed(`Required PR field is missing or empty: ${field}`);
+                return;
+              }
+            }
+
+            core.info('Governance checklist and required fields validated.');

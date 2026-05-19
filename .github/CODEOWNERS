@@ -1,0 +1,21 @@
+# CODEOWNERS
+#
+# Note: Replace the owners below with valid GitHub usernames or team handles
+# in your org (for example: @your-org/governance-reviewers).
+# These rules are intended to work with branch protection requiring code owner review.
+
+# Governance documents and generated governance artifacts
+docs/governance/* @brian
+
+# Governance templates
+docs/governance/templates/* @brian
+
+# Governance repo customizations
+.github/skills/repo-governance/* @brian
+.github/instructions/repo-governance.instructions.md @brian
+.github/prompts/generate-governance-artifacts.prompt.md @brian
+.github/agents/release-gate.agent.md @brian
+
+# Governance change intake and review templates
+.github/ISSUE_TEMPLATE/governance-change.yml @brian
+.github/pull_request_template.md @brian

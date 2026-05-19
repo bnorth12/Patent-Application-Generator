@@ -1,0 +1,16 @@
+{
+  "title": "Adaptive Patent Draft Validation Pipeline",
+  "inventors": [
+    "Jordan Example",
+    "Taylor Example"
+  ],
+  "field_of_invention": "Document automation and governance control systems.",
+  "background": "Conventional drafting workflows require repetitive manual formatting and inconsistent governance evidence tracking.",
+  "summary": "A modular generation pipeline builds a draft patent application from structured input and emits deterministic output sections.",
+  "abstract": "A system and method for generating patent application drafts from structured data while preserving traceable section-level output.",
+  "claims": [
+    "A method for generating a patent application draft by receiving structured invention metadata and producing formatted draft sections.",
+    "The method of claim 1, wherein the output includes title, field, background, summary, abstract, and claim sections.",
+    "The method of claim 1, wherein generation output is deterministic and suitable for traceability review."
+  ]
+}

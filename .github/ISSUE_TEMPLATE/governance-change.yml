@@ -1,0 +1,103 @@
+name: Governance Change Request
+description: Request a governance baseline, gate, traceability, or policy change.
+title: "governance: <short change summary>"
+labels:
+  - governance
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for governance-impacting changes.
+        Provide explicit scope, rationale, and evidence expectations.
+
+  - type: dropdown
+    id: change_type
+    attributes:
+      label: Change type
+      description: Select the governance change category.
+      options:
+        - Baseline update
+        - HITL gate update
+        - Traceability update
+        - Sprint governance update
+        - Alignment report remediation
+        - Exception request
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective and scope
+      description: Describe the governance objective and in-scope repository areas.
+      placeholder: Objective, scope, and boundaries.
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Rationale and risk impact
+      description: Explain why this change is needed and the impact of not making it.
+      placeholder: Risk impact, urgency, and dependency notes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: controls
+    attributes:
+      label: Controls and affected gates
+      description: List controls and HITL gates affected by this request.
+      placeholder: Planning, Implementation, Review, Release, Post-release, Issue/PR closure.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required evidence
+      description: Define evidence needed for approval.
+      placeholder: Artifacts, approvals, validation notes.
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: Accountable owner
+      description: Person accountable for implementation.
+      placeholder: @username
+    validations:
+      required: true
+
+  - type: input
+    id: approver
+    attributes:
+      label: Approver role
+      description: Role or person responsible for approval.
+      placeholder: Governance owner, reviewer, or maintainer.
+    validations:
+      required: true
+
+  - type: input
+    id: target_date
+    attributes:
+      label: Target closure date
+      description: Planned completion date for this governance change.
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: readiness
+    attributes:
+      label: Readiness checklist
+      options:
+        - label: Scope and objective are explicit.
+          required: true
+        - label: Owner and approver are identified.
+          required: true
+        - label: Required evidence is listed.
+          required: true
+        - label: Traceability impact is identified.
+          required: true
