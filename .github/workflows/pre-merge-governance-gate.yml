@@ -33,8 +33,32 @@ jobs:
               return;
             }
 
-            if (pr.mergeable_state !== 'clean') {
-              core.setFailed(`PR mergeable_state is '${pr.mergeable_state}'. Required state: clean.`);
+            // GitHub can briefly report mergeability as unknown right after updates.
+            // Poll PR state to avoid failing on transient evaluation windows.
+            let mergeableState = pr.mergeable_state;
+            let mergeable = pr.mergeable;
+            const attempts = 6;
+
+            for (let i = 1; i <= attempts; i++) {
+              const { data: freshPr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+              });
+
+              mergeableState = freshPr.mergeable_state;
+              mergeable = freshPr.mergeable;
+              core.info(`Mergeability check attempt ${i}/${attempts}: mergeable=${mergeable}, mergeable_state='${mergeableState}'.`);
+
+              if (mergeable !== null && mergeableState !== 'unknown') {
+                break;
+              }
+
+              await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+
+            if (mergeableState !== 'clean') {
+              core.setFailed(`PR mergeable_state is '${mergeableState}'. Required state: clean.`);
               return;
             }
 
