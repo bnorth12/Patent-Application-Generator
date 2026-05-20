@@ -1,0 +1,8 @@
+# Local secrets and machine-specific credentials
+.local-secrets/
+.env
+.env.local
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
