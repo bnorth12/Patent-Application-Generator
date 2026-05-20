@@ -20,9 +20,9 @@ Covers all HITL (Human-in-the-Loop) governance gates for Sprint 1 PR #7.
 - [x] Post-release actions are identified when needed
 - [x] Issue/PR closure traceability is complete
 - [x] Gaps, if any, include owner and due date
-- [x] All linked issues are closed before merge
-- [x] Local pre-merge-gate task passed
-- [ ] Pre-merge-governance-gate workflow passed
+- [ ] All linked issues are closed before merge — OPEN: Issues #3, #4, #5, #6 must be closed in GitHub before merge (Closes #N keywords present; auto-closes on merge per PR body)
+- [ ] Local pre-merge-gate task passed — OPEN: Working tree dirty; commit .github/copilot-instructions.md and .github/prompts/close-sprint-1.prompt.md, then re-run
+- [ ] Pre-merge-governance-gate workflow passed — OPEN: Confirm CI result after next push to feature/sprint-1-draft-prototype
 
 ## Evidence Requirements
 - Checklist above must be completed and checked
