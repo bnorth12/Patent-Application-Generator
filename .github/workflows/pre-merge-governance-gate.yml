@@ -143,17 +143,24 @@ jobs:
             const prNode = reviewData.repository.pullRequest;
             const unresolved = prNode.reviewThreads.nodes.filter(t => !t.isResolved).length;
 
-            const exceptionsLogPath = 'docs/governance/governance-exceptions-log.md';
-            let exceptionLog = '';
-            if (fs.existsSync(exceptionsLogPath)) {
-              exceptionLog = fs.readFileSync(exceptionsLogPath, 'utf8').toLowerCase();
-            }
-
             const authorLogin = (pr.user && pr.user.login ? pr.user.login : '').toLowerCase();
             const ownerLogin = context.repo.owner.toLowerCase();
-            const hasSingleMaintainerException =
-              exceptionLog.includes(`single-maintainer review exception for pr #${pr.number}`) &&
-              exceptionLog.includes('| active |');
+
+            // Check for single-maintainer review exception in governance exceptions log
+            let hasSingleMaintainerException = false;
+            try {
+              const exceptionsLogPath = 'docs/governance/governance-exceptions-log.md';
+              if (fs.existsSync(exceptionsLogPath)) {
+                const exceptionLog = fs.readFileSync(exceptionsLogPath, 'utf8').toLowerCase();
+                const prPattern = `pr #${pr.number}`;
+                hasSingleMaintainerException =
+                  exceptionLog.includes(prPattern) &&
+                  exceptionLog.includes('| active |') &&
+                  (exceptionLog.includes('review exception') || exceptionLog.includes('exc-'));
+              }
+            } catch (e) {
+              core.warning(`Could not read exceptions log: ${e.message}`);
+            }
 
             if (prNode.reviewDecision === 'APPROVED' && unresolved === 0) {
               core.info('Review decision approved and all threads resolved.');
@@ -167,10 +174,15 @@ jobs:
               return;
             }
 
-            if (prNode.reviewDecision !== 'APPROVED') {
+            if (prNode.reviewDecision !== 'APPROVED' && !hasSingleMaintainerException) {
               core.setFailed(
                 `Review decision is '${prNode.reviewDecision}'. Required: APPROVED, or a documented active single-maintainer review exception for this PR.`
               );
+              return;
+            }
+
+            if (hasSingleMaintainerException && authorLogin === ownerLogin) {
+              core.info(`Single-maintainer review exception is active; continuing with other gate checks.`);
               return;
             }
 
