@@ -49,15 +49,19 @@ Pass "No merge conflict markers detected in merge simulation."
 
 $diffCheck = git diff --check origin/$BaseBranch...HEAD
 if ($diffCheck) {
-    Fail "Whitespace or conflict-marker issues detected in changed content.`n$diffCheck"
+    Fail "Whitespace or conflict-marker issues detected in changed content.`n`n$diffCheck"
 }
 Pass "Diff quality checks passed."
 
 $changedFiles = git diff --name-only origin/$BaseBranch...HEAD
 if ($changedFiles) {
-    $markers = Select-String -Path $changedFiles -Pattern "^(<<<<<<<|=======|>>>>>>>)" -ErrorAction SilentlyContinue
-    if ($markers) {
-        Fail "Conflict markers detected in changed files."
+    # Filter to files that exist and are readable (exclude deleted files)
+    $existingFiles = @($changedFiles | Where-Object { Test-Path $_ -PathType Leaf })
+    if ($existingFiles) {
+        $markers = Select-String -Path $existingFiles -Pattern "^(<<<<<<<|=======|>>>>>>>)" -ErrorAction SilentlyContinue
+        if ($markers) {
+            Fail "Conflict markers detected in changed files."
+        }
     }
 }
 Pass "No conflict markers found in changed files."
